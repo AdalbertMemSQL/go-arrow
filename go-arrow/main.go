@@ -56,10 +56,6 @@ func main() {
 	// Create Pipe reader and writer
 	pr, pw := io.Pipe()
 
-	mysql.RegisterReaderHandler("arrow", func() io.Reader {
-		return pr
-	})
-
 	// Asynchronously write CSV data to the pipe
 	go func() {
 		defer pw.Close()
@@ -81,6 +77,9 @@ func main() {
 	}()
 
 	// Send LOAD DATA query to the database
+	mysql.RegisterReaderHandler("arrow", func() io.Reader {
+		return pr
+	})
 	_, err = db.Exec("LOAD DATA LOCAL INFILE 'Reader::arrow' INTO TABLE t")
 	if err != nil {
 		log.Fatal(err)
