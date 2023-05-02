@@ -44,8 +44,14 @@ func main() {
 	defer db.Close()
 
 	// Prepare table
-	db.Exec("DROP TABLE IF EXISTS t")
-	db.Exec("CREATE TABLE t(i64 BIGINT, f64 FLOAT, str TEXT)")
+	_, err = db.Exec("DROP TABLE IF EXISTS t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec("CREATE TABLE t(i64 BIGINT, f64 FLOAT, str TEXT)")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Create Pipe reader and writer
 	pr, pw := io.Pipe()
